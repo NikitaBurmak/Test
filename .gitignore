@@ -1,0 +1,30 @@
+# Composer
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Symfony
+/app/var/cache/*
+!/app/var/cache/.gitkeep
+/app/var/logs/*
+!/app/var/logs/.gitkeep
+/app/var/sessions/*
+!/app/var/sessions/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env.local
+.env.*.local
+
+# Docker
+/app/vendor/
