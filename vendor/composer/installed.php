@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '2f60ca449f2ff22c131b67abab8337c72417fbb3',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '2f60ca449f2ff22c131b67abab8337c72417fbb3',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -856,6 +856,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'symfony/maker-bundle' => array(
+            'pretty_version' => 'v1.67.0',
+            'version' => '1.67.0.0',
+            'reference' => '6ce8b313845f16bcf385ee3cb31d8b24e30d5516',
+            'type' => 'symfony-bundle',
+            'install_path' => __DIR__ . '/../symfony/maker-bundle',
+            'aliases' => array(),
+            'dev_requirement' => true,
+        ),
         'symfony/password-hasher' => array(
             'pretty_version' => 'v7.4.6',
             'version' => '7.4.6.0',
@@ -975,6 +984,15 @@
             'install_path' => __DIR__ . '/../symfony/polyfill-uuid',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'symfony/process' => array(
+            'pretty_version' => 'v7.4.5',
+            'version' => '7.4.5.0',
+            'reference' => '608476f4604102976d687c483ac63a79ba18cc97',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/process',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'symfony/property-access' => array(
             'pretty_version' => 'v7.4.4',
