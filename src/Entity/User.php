@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "users")]
+
 class User
 {
     #[ORM\Id]
@@ -13,22 +15,22 @@ class User
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(name: "firstName", type: "string", length: 255)]
     private string $firstName;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(name: "lastName", type: "string", length: 255)]
     private string $lastName;
 
-    #[ORM\Column(type: "json")]
+    #[ORM\Column(name: "phoneNumbers", type: "json")]
     private array $phoneNumbers = [];
 
-    #[ORM\Column(type: "string", length: 45)]
+    #[ORM\Column(name: "ip", type: "string", length: 45)]
     private string $ip;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(name: "country", type: "string", length: 255)]
     private string $country;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(name: "createdAt", type: "datetime_immutable")]
     private \DateTimeInterface $createdAt;
 
     public function __construct()
