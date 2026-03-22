@@ -1,0 +1,11 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: User API
+            description: Test API with RabbitMQ
+            version: 1.0.0
+
+    areas:
+        default:
+            path_patterns:
+                - ^/
