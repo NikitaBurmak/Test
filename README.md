@@ -5,7 +5,7 @@ It provides endpoints for managing users and phone numbers.
 
 ## Features
 
-- Symfony 8.5
+- Symfony 7.4
 - REST API
 - Docker support
 - PHPUnit tests
