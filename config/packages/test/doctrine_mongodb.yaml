@@ -1,0 +1,6 @@
+doctrine_mongodb:
+    connections:
+        default:
+            server: '%env(MONGODB_URL)%'
+            options: {}
+    default_database: '%env(MONGODB_DB)%'

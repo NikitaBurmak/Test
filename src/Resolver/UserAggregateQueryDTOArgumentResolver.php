@@ -32,10 +32,7 @@ class UserAggregateQueryDTOArgumentResolver implements ValueResolverInterface
         yield new UserAggregateQueryDTO(
             $sort,
             $limit,
-            $cursor,
-            $country,
-            $firstName,
-            $lastName
+            $cursor
         );
     }
 }

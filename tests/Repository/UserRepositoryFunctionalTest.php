@@ -5,6 +5,7 @@ namespace App\Tests\Repository;
 use App\Document\User;
 use App\Repository\UserRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
@@ -15,30 +16,37 @@ class UserRepositoryFunctionalTest extends KernelTestCase
     private DocumentManager $dm;
     private UserRepository $repository;
 
+    /**
+     * @throws MongoDBException
+     */
     protected function setUp(): void
     {
-        // Boot the kernel to get the DocumentManager
         self::bootKernel();
-
         $this->dm = static::getContainer()->get(DocumentManager::class);
         $this->repository = new UserRepository($this->dm);
 
-        // Clean collection before each test
+        echo "Using MongoDB: " . $this->dm->getDocumentDatabase(User::class)->getDatabaseName() . PHP_EOL;
+
         $this->dm->getDocumentCollection(User::class)->deleteMany([]);
     }
 
+    /**
+     * @throws MongoDBException
+     */
     protected function tearDown(): void
     {
-        // Clean collection after each test
         if (isset($this->dm)) {
             $this->dm->getDocumentCollection(User::class)->deleteMany([]);
         }
         parent::tearDown();
     }
 
+    /**
+     * @throws MongoDBException
+     * @throws \Throwable
+     */
     public function testFindUsersWithAggregationReturnsArray(): void
     {
-        // Create some test users
         $this->createTestUsers(5);
 
         $result = $this->repository->findUsersWithAggregation();
@@ -60,15 +68,12 @@ class UserRepositoryFunctionalTest extends KernelTestCase
     {
         $this->createTestUsers(10);
 
-        // Get first batch
         $result1 = $this->repository->findUsersWithAggregation('asc', 5, 0);
         $this->assertCount(5, $result1);
 
-        // Get last ID as cursor
         $lastUser = end($result1);
         $cursor = is_array($lastUser) ? ($lastUser['id'] ?? 0) : ($lastUser->getId() ?? 0);
 
-        // Get second batch with cursor
         $result2 = $this->repository->findUsersWithAggregation('asc', 5, $cursor);
         $this->assertCount(5, $result2);
     }
@@ -98,6 +103,10 @@ class UserRepositoryFunctionalTest extends KernelTestCase
         $this->assertEquals(0, $count);
     }
 
+    /**
+     * @throws MongoDBException
+     * @throws \Throwable
+     */
     private function createTestUsers(int $count): void
     {
         for ($i = 1; $i <= $count; $i++) {

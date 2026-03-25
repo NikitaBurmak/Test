@@ -14,28 +14,19 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[OA\Tag(name: 'Users')]
 class UserController extends AbstractController
 {
     /**
      * @throws ExceptionInterface
      */
     #[Route('/users', name: 'app_user_create', methods: ['POST'])]
-    #[OA\Post(requestBody: new OA\RequestBody(content: new OA\JsonContent(ref: '#/components/schemas/CreateUserInputDTO')))]
-    #[OA\Response(response: '202', description: 'User creation queued', content: new OA\JsonContent(properties: [new OA\Property(property: 'status', type: 'string')]))]
     public function create(CreateUserInputDTO $input, MessageBusInterface $bus): JsonResponse
     {
         $bus->dispatch(new UserMessage($input, $input->ip));
-
         return new JsonResponse(['status' => 'queued'], 202);
     }
 
     #[Route('/users', name: 'app_user_list', methods: ['GET'])]
-    #[OA\Get]
-    #[OA\Parameter(name: 'sort', in: 'query', schema: new OA\Schema(type: 'string', default: 'asc', enum: ['asc', 'desc']))]
-    #[OA\Parameter(name: 'limit', in: 'query', schema: new OA\Schema(type: 'integer', default: 10, maximum: 100, minimum: 1))]
-    #[OA\Parameter(name: 'cursor', in: 'query', schema: new OA\Schema(type: 'integer', default: 0, minimum: 0))]
-    #[OA\Response(response: '200', description: 'Returns list of users', content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: '#/components/schemas/User')))]
     public function list(UserAggregateQueryDTO $query, UserRepository $userRepository): JsonResponse
     {
         $users = $userRepository->findUsersWithAggregation(
@@ -71,12 +62,9 @@ class UserController extends AbstractController
     }
 
     #[Route('/users/count', name: 'app_user_count', methods: ['GET'])]
-    #[OA\Get]
-    #[OA\Response(response: '200', description: 'Returns total count of users', content: new OA\JsonContent(properties: [new OA\Property(property: 'count', type: 'integer')]))]
     public function count(UserRepository $userRepository): JsonResponse
     {
         $count = $userRepository->countUsers();
-
         return new JsonResponse(['count' => $count]);
     }
 }

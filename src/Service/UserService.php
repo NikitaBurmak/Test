@@ -26,7 +26,6 @@ class UserService
     }
 
     /**
-     * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws DecodingExceptionInterface
@@ -34,22 +33,37 @@ class UserService
      */
     public function createUser(CreateUserInputDTO $dto, string $ip): void
     {
-        $user = new User()
-            ->setFirstName($dto->firstName)
-            ->setLastName($dto->lastName)
-            ->setPhoneNumbers($dto->phoneNumbers)
-            ->setIp($ip)
-            ->setCountry(
-                $this->ipLocateClient->getCountryByIp($ip) ?? 'Unknown'
-            );
+        try {
+            $country = 'Unknown';
+            try {
+                $country = $this->ipLocateClient->getCountryByIp($ip) ?? 'Unknown';
+            } catch (\Throwable $e) {
+            }
 
-        $this->dm->persist($user);
-        $this->dm->flush();
+            $user = new User()
+                ->setFirstName($dto->firstName)
+                ->setLastName($dto->lastName)
+                ->setPhoneNumbers($dto->phoneNumbers)
+                ->setIp($ip)
+                ->setCountry($country);
+
+            $this->dm->persist($user);
+            $this->dm->flush();
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('Cannot save user: ' . $e->getMessage(), 0, $e);
+        }
     }
-    
+
+    /**
+     * @return array<string, mixed>[]
+     */
     public function getUsers(string $sort = 'asc', int $limit = 10, int $cursor = 0): array
     {
-        $users = $this->userRepository->findUsersWithAggregation($sort, $limit, $cursor);
+        try {
+            $users = $this->userRepository->findUsersWithAggregation($sort, $limit, $cursor);
+        } catch (MongoDBException $e) {
+            throw new \RuntimeException('Cannot fetch users', 0, $e);
+        }
 
         $result = [];
         foreach ($users as $user) {
