@@ -5,14 +5,17 @@ It provides endpoints for managing users and phone numbers.
 
 ## Features
 
-- Symfony 7.4
+- Symfony 8
 - REST API
+- MongoDB (Doctrine ODM)
 - Docker support
-- PHPUnit tests
+- PHPUnit tests (>90% coverage)
 - Symfony Messenger (queue)
-- DTO validation
+- Validation
 - JSON responses
+- Aggregation queries
 - Clean architecture
+- External API integration (IpLocate)
 
 ## Installation
 
@@ -43,6 +46,12 @@ App will be available at:
 http://localhost:8081
 ```
 
+MongoDB:
+```bash
+mongodb://root:root@localhost:27017
+```
+
+
 ### Without Docker
 
 ```bash
@@ -72,6 +81,12 @@ Body:
 ```
 
 ---
+
+## Count users
+
+```
+GET /users/count
+```
 
 ### Get all users
 
@@ -105,11 +120,32 @@ Example:
 http://localhost:8081/users?limit=10&cursor=0&sort=asc
 ```
 
+## OpenAPI documentation
+
+API documentation is generated automatically using OpenAPI.
+Available at:
+
+```
+/doc
+```
+
+Example:
+```
+[http://localhost:8081/users?limit=10&cursor=0&sort=asc](http://localhost:8081/doc)
+```
+
+Features:
+	•	Auto generated schema
+	•	DTO support
+	•	Request / Response description
+	•	Swagger UI
+
+
 ## 📨 Queue
 
 Project uses Symfony Messenger.
 
-User creation request is sent to queue and processed by handler.
+Message → Handler → Service → Repository
 
 Run consumer:
 
@@ -122,31 +158,23 @@ php bin/console messenger:consume async
 Run tests:
 
 ```bash
-php bin/phpunit
+php bin/phpunit --coverage-text
 ```
 
-Tests included:
+Includes:
+	•	DTO tests
+	•	Service tests
+	•	Handler tests
+	•	Resolver tests
+	•	Repository tests (with mocks)
+	•	IpLocate tests
+Rules:
+	•	Unit tests only
+	•	No DB connection
+	•	No external services
+	•	Using mocks
+	•	Coverage > 90%
 
-- DTO tests
-- Controller tests
-- Service tests
-- Handler tests
-
-Used:
-
-- KernelTestCase
-- WebTestCase
-
-## 📁 Project structure
-
-```
-src/
-tests/
-config/
-docker/
-public/
-composer.json
-```
 
 ## Author
 
