@@ -2,23 +2,19 @@
 
 namespace App\DTO;
 
+use AllowDynamicProperties;
+use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[AllowDynamicProperties]
+#[OA\Schema(description: 'User data for request/response')]
 class UserRequestDTO
 {
     #[Assert\NotBlank]
-    #[Assert\Type('string')]
     public string $firstName;
 
     #[Assert\NotBlank]
-    #[Assert\Type('string')]
     public string $lastName;
 
-    #[Assert\NotNull]
-    #[Assert\Type('array')]
-    #[Assert\All([
-        new Assert\Type('string'),
-        new Assert\Regex('/^\+\d{10,15}$/')
-    ])]
     public array $phoneNumbers = [];
 }

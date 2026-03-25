@@ -2,14 +2,12 @@
 
 namespace App\Message;
 
-use App\DTO\UserRequestDTO;
+use App\DTO\CreateUserInputDTO;
 
 readonly class UserMessage
 {
     public function __construct(
-        public UserRequestDTO $dto,
-        public string         $ip
-    )
-    {
-    }
+        public CreateUserInputDTO $input,
+        public string $ip
+    ) {}
 }

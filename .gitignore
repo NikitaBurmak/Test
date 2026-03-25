@@ -1,16 +1,23 @@
 # Composer
-/var/
 /vendor/
-node_modules/
+composer.phar
 
 # Symfony
-/var/cache/*
-/var/logs/*
-/var/sessions/*
+/var/cache/
+/var/log/
+/var/sessions/
+/var/
 
 # Environment
+.env
 .env.local
+.env.test
 .env.*.local
+
+# PHPUnit
+.phpunit.cache/
+coverage/
+build/
 
 # IDE
 .idea/
@@ -18,3 +25,12 @@ node_modules/
 
 # OS
 .DS_Store
+
+# Docker
+compose.override.yaml
+
+# Static analysis
+phpstan.neon
+
+# Node
+node_modules/

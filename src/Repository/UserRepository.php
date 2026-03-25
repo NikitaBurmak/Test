@@ -2,31 +2,42 @@
 
 namespace App\Repository;
 
-use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Document\User;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 
-class UserRepository extends ServiceEntityRepository
+class UserRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, User::class);
+    public function __construct(
+        private DocumentManager $dm
+    ) {
     }
-    /**
-     * @return User[]
-     */
-    public function findUsersWithCursor(string $sort = 'asc', int $limit = 10, int $cursor = 0): array
-    {
-        $qb = $this->createQueryBuilder('u');
+
+    public function findUsersWithAggregation(
+        string $sort = 'asc',
+        int $limit = 10,
+        int $cursor = 0
+    ): array {
+        $builder = $this->dm->createAggregationBuilder(User::class);
 
         if ($cursor > 0) {
-            $qb->andWhere($sort === 'asc' ? 'u.id > :cursor' : 'u.id < :cursor')
-                ->setParameter('cursor', $cursor);
+            $builder->match()->field('_id')->gt($cursor);
         }
 
-        $qb->orderBy('u.id', $sort === 'asc' ? 'ASC' : 'DESC')
-            ->setMaxResults($limit);
+        $builder->sort('_id', $sort === 'asc' ? 'asc' : 'desc')
+            ->limit($limit);
 
-        return $qb->getQuery()->getResult();
+        /** @var User[] $result */
+        $result = $builder->execute()->toArray();
+        return $result;
+    }
+
+    public function countUsers(): int
+    {
+        $builder = $this->dm->createAggregationBuilder(User::class);
+        $builder->count('total');
+
+        $result = $builder->execute()->toArray();
+        return $result[0]['total'] ?? 0;
     }
 }

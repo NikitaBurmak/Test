@@ -4,12 +4,17 @@
 # Methods with the #[Route] attribute are automatically imported.
 # See also https://symfony.com/doc/current/routing.html
 
-# To list all registered routes, run the following command:
-#   bin/console debug:router
-
+# Import controllers with attribute routing
 controllers:
-    resource: routing.controllers
+    resource: ../src/Controller/
+    type: attribute
 
-app.swagger_ui:
-    path: /api/doc
-    controller: nelmio_api_doc.controller.swagger_ui
+# API Documentation - Swagger UI
+api_doc:
+    path: /doc
+    controller: nelmio_api_doc.controller.stoplight
+
+# API Documentation - OpenAPI JSON
+api_doc_json:
+    path: /doc.json
+    controller: nelmio_api_doc.controller.swagger_json

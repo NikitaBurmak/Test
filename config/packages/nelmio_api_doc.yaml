@@ -2,10 +2,15 @@ nelmio_api_doc:
     documentation:
         info:
             title: User API
-            description: Test API with RabbitMQ
             version: 1.0.0
-
-    areas:
-        default:
-            path_patterns:
-                - ^/
+            description: API for managing users
+        servers:
+            - url: http://localhost:8081
+              description: Local development server
+    models:
+        names:
+            - { type: App\DTO\CreateUserInputDTO, alias: CreateUserInputDTO }
+            - { type: App\DTO\UserRequestDTO, alias: UserRequestDTO }
+            - { type: App\DTO\UserListQueryDTO, alias: UserListQueryDTO }
+            - { type: App\DTO\UserAggregateQueryDTO, alias: UserAggregateQueryDTO }
+            - { type: App\Document\User, alias: User }

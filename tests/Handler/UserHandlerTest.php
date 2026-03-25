@@ -2,45 +2,45 @@
 
 namespace App\tests\Handler;
 
-use App\Controller\UserController;
-use App\DTO\UserRequestDTO;
+use App\DTO\CreateUserInputDTO;
 use App\Message\UserMessage;
 use App\MessageHandler\UserMessageHandler;
 use App\Service\UserService;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\Entity\User;
-use App\MessageHandler;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use PHPUnit\Framework\TestCase;
 
-class UserHandlerTest extends WebTestCase
+class UserHandlerTest extends TestCase
 {
-    /**
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws ClientExceptionInterface
-     */
-    public function testHandlerCallsService(): void
+    public function testInvokeCallsService(): void
     {
         $service = $this->createMock(UserService::class);
 
-        $service
-            ->expects($this->once())
-            ->method('createUser');
+        $service->expects($this->once())
+            ->method('createUser')
+            ->with($this->isInstanceOf(CreateUserInputDTO::class), '192.168.1.1');
 
         $handler = new UserMessageHandler($service);
 
-        $dto = new UserRequestDTO();
-        $dto->firstName = "Nikita";
-        $dto->lastName = "Burmak";
-        $dto->phoneNumbers = ["+380123456789"];
+        $dto = new CreateUserInputDTO('John', 'Doe', ['+1234567890']);
+        $message = new UserMessage($dto, '192.168.1.1');
 
-        $message = new UserMessage($dto, "127.0.0.1");
+        $handler($message);
+    }
+
+    public function testInvokeWithDifferentData(): void
+    {
+        $service = $this->createMock(UserService::class);
+
+        $service->expects($this->once())
+            ->method('createUser')
+            ->with(
+                $this->callback(fn($dto) => $dto->firstName === 'Jane' && $dto->lastName === 'Smith'),
+                '10.0.0.1'
+            );
+
+        $handler = new UserMessageHandler($service);
+
+        $dto = new CreateUserInputDTO('Jane', 'Smith', ['+0987654321']);
+        $message = new UserMessage($dto, '10.0.0.1');
 
         $handler($message);
     }

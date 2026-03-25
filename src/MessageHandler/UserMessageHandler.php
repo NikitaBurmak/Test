@@ -31,7 +31,7 @@ class UserMessageHandler
     public function __invoke(UserMessage $message): void
     {
         $this->userService->createUser(
-            $message->dto,
+            $message->input,
             $message->ip
         );
     }

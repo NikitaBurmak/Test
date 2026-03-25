@@ -8,12 +8,19 @@ RUN apk add --no-cache \
     rabbitmq-c-dev \
     autoconf \
     g++ \
-    make
+    make \
+    linux-headers
 
 RUN docker-php-ext-install pdo pdo_pgsql
 
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
 RUN pecl install amqp \
     && docker-php-ext-enable amqp
+
+RUN pecl install mongodb \
+    && docker-php-ext-enable mongodb
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 

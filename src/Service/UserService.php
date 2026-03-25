@@ -2,11 +2,13 @@
 
 namespace App\Service;
 
+use App\DTO\CreateUserInputDTO;
 use App\DTO\UserRequestDTO;
-use App\Entity\User;
+use App\Document\User;
 use App\Infrastructure\IpLocate\Client;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -16,7 +18,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 class UserService
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        private DocumentManager $dm,
         private Client                 $ipLocateClient,
         private UserRepository $userRepository
     )
@@ -30,7 +32,7 @@ class UserService
      * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      */
-    public function createUser(UserRequestDTO $dto, string $ip): void
+    public function createUser(CreateUserInputDTO $dto, string $ip): void
     {
         $user = new User()
             ->setFirstName($dto->firstName)
@@ -41,13 +43,13 @@ class UserService
                 $this->ipLocateClient->getCountryByIp($ip) ?? 'Unknown'
             );
 
-        $this->em->persist($user);
-        $this->em->flush();
+        $this->dm->persist($user);
+        $this->dm->flush();
     }
-
+    
     public function getUsers(string $sort = 'asc', int $limit = 10, int $cursor = 0): array
     {
-        $users = $this->userRepository->findUsersWithCursor($sort, $limit, $cursor);
+        $users = $this->userRepository->findUsersWithAggregation($sort, $limit, $cursor);
 
         $result = [];
         foreach ($users as $user) {
